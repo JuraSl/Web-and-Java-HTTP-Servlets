@@ -68,10 +68,8 @@ public class CalcServlet extends HttpServlet {
             }
             
         }catch(Exception e){
-            out.println("<h3> style=\"color:red;\" ERROR Check parameters </h3>");
-            out.println("<h3> Parameters must be one, two or operation</h3>");
-            out.println("<h3> Operation can accept : add, substract, multiply or divide</h3>");
-            out.println("<h3> Parameters one and two must be int or double</h3>");
+            
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }finally{
             out.println("</body>");
             out.println("</html>");
