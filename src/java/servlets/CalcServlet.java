@@ -15,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 public class CalcServlet extends HttpServlet {
-    
-    private ArrayList<String> operationList;
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -29,7 +27,7 @@ public class CalcServlet extends HttpServlet {
             out.println("<title>Servlet CalcServlet</title>");            
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet CalcServlet at " + request.getContextPath() + "</h1>");
+            out.println("<h2>Servlet CalcServlet at " + request.getContextPath() + "</h2>");
         
         try{
             
@@ -47,6 +45,8 @@ public class CalcServlet extends HttpServlet {
             // calculation
             double result = calcResult(operType, one, two);
             
+            ArrayList<String> operationList;
+            
             // creating new list for new session
             if(session.isNew()){
                 operationList = new ArrayList<String>();
@@ -59,7 +59,7 @@ public class CalcServlet extends HttpServlet {
             session.setAttribute("formula", operationList);
             
             // print all operations
-            out.println("<h1>Yuou session Id is: " + session.getId() + "</h1>");
+            out.println("<h3>Your session Id is: " + session.getId() + "</h3>");
             out.println("<h3> All operation list :" + operationList.size() + "</h3>");
             
             // print operations
