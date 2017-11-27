@@ -1,6 +1,4 @@
-/*
- * 
- */
+
 package servlets;
 
 import calc.CalcOperators;
@@ -8,6 +6,9 @@ import calc.OperationType;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,14 @@ public class CalcServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
+        // trying to get variable from common context from attribute named map
+        Map<String,List> sessionMap = (Map<String, List>)request.getServletContext().getAttribute(SESSION_MAP);
+        
+        if(sessionMap == null){
+            sessionMap = new HashMap<String,List>();
+        }
+        
         PrintWriter out = response.getWriter();
             
             out.println("<!DOCTYPE html>");
@@ -58,6 +67,10 @@ public class CalcServlet extends HttpServlet {
             operationList.add(one + " " + operType.getStringValue() + " " + two + " = " + result);
             session.setAttribute("formula", operationList);
             
+            out.println("<table cellpadding=\"20\">");
+            out.println("<tr>");
+            out.println("<td style=\"vertical-align:top:\">");
+            
             // print all operations
             out.println("<h3>Your session Id is: " + session.getId() + "</h3>");
             out.println("<h3> All operation list :" + operationList.size() + "</h3>");
@@ -67,6 +80,27 @@ public class CalcServlet extends HttpServlet {
                 out.println("<h3>" + list + "</h3>");
             }
             
+            // add current session ID and operation list and write them as attribute to the context
+            sessionMap.put(session.getId(), operationList);
+            getServletContext().setAttribute(SESSION_MAP, sessionMap);
+            
+            out.println("</td>");
+            out.println("<td style=\"vertical-align:top:\">");
+
+            for(Map.Entry<String, List> list: sessionMap.entrySet()){
+                String sessionId = list.getKey();
+                List listOperation = list.getValue();
+                
+                out.println("<h3 style=\"color:red\">" + sessionId + "</h3>");
+                
+                for(Object listValues: listOperation){
+                    out.println("<h3>" + listValues + "</h3>");
+                }
+            }
+            
+            out.println("</td>");
+            out.println("</tr>");
+            out.println("</table>");
         }catch(Exception e){
             
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -76,6 +110,7 @@ public class CalcServlet extends HttpServlet {
             out.close();
         }
     }
+    public static final String SESSION_MAP = "sessionMap";
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
